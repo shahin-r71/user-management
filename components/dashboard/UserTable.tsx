@@ -74,17 +74,25 @@ export function UserTable({
     }),
     columnHelper.accessor("name", {
       header: "Name",
-      cell: (info) => <div className="font-medium">{info.getValue()}</div>,
+      cell: (info) => (
+        <div className={`font-medium ${info.row.original.status === 'blocked' ? 'line-through text-gray-500' : ''}`}>
+          {info.getValue()}
+        </div>
+      ),
     }),
     columnHelper.accessor("email", {
       header: "Email ↓",
-      cell: (info) => <div className="font-medium">{info.getValue()}</div>,
+      cell: (info) => (
+        <div className={`font-medium ${info.row.original.status === 'blocked' ? 'text-gray-400' : ''}`}>
+          {info.getValue()}
+        </div>
+      ),
     }),
     columnHelper.accessor("lastLogin", {
       header: "Last Seen",
       cell: (info) => (
         <Tooltip content={formatDate(new Date(info.getValue()),'PPpp')} position="bottom">
-          <div className="font-medium">
+          <div className={`font-medium ${info.row.original.status === 'blocked' ? 'text-gray-400' : ''}`}>
             {formatDistanceToNow(new Date(info.getValue()), { addSuffix: true })}
           </div>
         </Tooltip>
