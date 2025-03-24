@@ -73,7 +73,7 @@ export async function PATCH(request: Request) {
 
     if (!currentUser || currentUser.status === 'blocked') {
         return NextResponse.json(
-        { error: 'Unauthorized' },
+        { message: 'Your account has been deactivated. Please contact support.' },
         { status: 401 }
         )
     }

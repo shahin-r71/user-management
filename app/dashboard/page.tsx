@@ -12,33 +12,13 @@ export default function DashboardPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentUserStatus, setCurrentUserStatus] = useState<string | null>(null);
+
 
   useEffect(() => {
-    const initializeData = () => {
-      fetchUsers();
-      checkCurrentUserStatus();
-    };
-    initializeData();
+    fetchUsers();
   }, []);
 
-  const checkCurrentUserStatus = async () => {
-    try {
-      const response = await fetch("/api/users/status");
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to check user status");
-      }
-      const data = await response.json();
-      setCurrentUserStatus(data.status);
-    } catch (error: unknown) {
-      console.error("Error checking user status:", error);
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-      if (typeof errorMessage === "string" && errorMessage.includes("Unauthorized")) {
-        router.push("/login");
-      }
-    }
-  };
+  
 
   const fetchUsers = async () => {
     try {
@@ -61,18 +41,8 @@ export default function DashboardPage() {
     }
   };
 
-  const checkIfBlocked = () => {
-    if (currentUserStatus === "blocked" || currentUserStatus === "deleted") {
-      toast.error("Your account has been deactivated. Please contact support.");
-      router.push("/login");
-      return true;
-    }
-    return false;
-  };
 
   const handleBlock = async () => {
-    // Check if current user is blocked
-    if (checkIfBlocked()) return;
 
     try {
       const response = await fetch("/api/users/status", {
@@ -98,15 +68,11 @@ export default function DashboardPage() {
       console.error("Error blocking users:", error);
       const errorMessage = error instanceof Error ? error.message : "Failed to block users";
       toast.error(errorMessage);
-      if (typeof errorMessage === "string" && errorMessage.includes("Unauthorized")) {
-        router.push("/login");
-      }
+      router.push("/login");
     }
   };
 
   const handleUnblock = async () => {
-    // Check if current user is blocked
-    if (checkIfBlocked()) return;
 
     try {
       const response = await fetch("/api/users/status", {
@@ -132,15 +98,11 @@ export default function DashboardPage() {
       console.error("Error unblocking users:", error);
       const errorMessage = error instanceof Error ? error.message : "Failed to unblock users";
       toast.error(errorMessage);
-      if (typeof errorMessage === "string" && errorMessage.includes("Unauthorized")) {
-        router.push("/login");
-      }
+      router.push("/login");
     }
   };
 
   const handleDelete = async () => {
-    // Check if current user is blocked
-    if (checkIfBlocked()) return;
 
     try {
       const response = await fetch(
@@ -162,9 +124,7 @@ export default function DashboardPage() {
       console.error("Error deleting users:", error);
       const errorMessage = error instanceof Error ? error.message : "Failed to delete users";
       toast.error(errorMessage);
-      if (typeof errorMessage === "string" && errorMessage.includes("Unauthorized")) {
-        router.push("/login");
-      }
+      router.push("/login");
     }
   };
 
