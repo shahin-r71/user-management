@@ -22,8 +22,8 @@ export function TableToolbar({
   const selectedCount = selectedUsers.length;
 
   return (
-    <div className="flex items-center gap-2">
-      <Tooltip content={hasSelectedUsers ? `Block ${selectedCount} selected user(s)` : "Select users to block"}>
+    <div className="flex items-center gap-4">
+      <Tooltip content={hasSelectedUsers ? `Block ${selectedCount} selected user${selectedCount > 1 ? 's' : ''}` : "Select users to block"}>
         <button
           onClick={onBlock}
           disabled={!hasSelectedUsers}
@@ -35,7 +35,7 @@ export function TableToolbar({
         </button>
       </Tooltip>
       
-      <Tooltip content={hasSelectedUsers ? `Unblock ${selectedCount} selected user(s)` : "Select users to unblock"}>
+      <Tooltip content={hasSelectedUsers ? `Unblock ${selectedCount} selected user${selectedCount > 1 ? 's' : ''}` : "Select users to unblock"}>
         <button
           onClick={onUnblock}
           disabled={!hasSelectedUsers}
@@ -47,7 +47,7 @@ export function TableToolbar({
         </button>
       </Tooltip>
       
-      <Tooltip content={hasSelectedUsers ? `Delete ${selectedCount} selected user(s)` : "Select users to delete"}>
+      <Tooltip content={hasSelectedUsers ? `Delete ${selectedCount} selected user${selectedCount > 1 ? 's' : ''}` : "Select users to delete"}>
         <button
           onClick={onDelete}
           disabled={!hasSelectedUsers}

@@ -9,8 +9,10 @@ import {
   createColumnHelper,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { formatDistanceToNow } from "date-fns";
+import { formatDate, formatDistanceToNow } from "date-fns";
 import type { User } from "@/lib/utils/types";
+import { Tooltip } from "../ui/Tooltip";
+
 
 type UserTableProps = {
   users: User[];
@@ -80,8 +82,13 @@ export function UserTable({
     }),
     columnHelper.accessor("lastLogin", {
       header: "Last Seen",
-      cell: (info) => <div className="font-medium">{formatDistanceToNow(new Date(info.getValue()),{addSuffix: true})}</div>,
-
+      cell: (info) => (
+        <Tooltip content={formatDate(new Date(info.getValue()),'PPpp')} position="bottom">
+          <div className="font-medium">
+            {formatDistanceToNow(new Date(info.getValue()), { addSuffix: true })}
+          </div>
+        </Tooltip>
+      ),
     }),
     columnHelper.accessor("status", {
       header: "Status",

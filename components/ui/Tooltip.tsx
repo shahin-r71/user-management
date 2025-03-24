@@ -33,7 +33,7 @@ export function Tooltip({
       {children}
       {isVisible && (
         <div
-          className={`absolute z-10 w-20 text-center px-2 py-1 text-xs font-medium text-white bg-gray-700 rounded-md shadow-md ${positionClasses[position]}`}
+          className={`absolute z-10 w-auto text-center px-2 py-1 text-xs font-medium text-white bg-gray-700 rounded-md shadow-md ${positionClasses[position]}`}
           role="tooltip"
         >
           {content}

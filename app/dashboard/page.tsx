@@ -146,7 +146,7 @@ export default function DashboardPage() {
               Users
             </h1>
             <p className="mt-2 text-md text-gray-900">
-              A list of all users in your account including their name, email, and
+              A list of all users in your account including their name, email, last seen time and
               status.
             </p>
           </div>
