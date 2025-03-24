@@ -1,36 +1,201 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# User Management System
 
-## Getting Started
+A full-stack web application for user management with authentication, registration, and admin capabilities.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### User Authentication
+
+* Secure login and registration
+* No email confirmation required
+* Password protection (supports any non-empty password)
+
+### User Management Dashboard
+
+* Comprehensive user table with sorting capabilities
+* Multiple user selection with checkboxes (including select all/deselect all)
+* Visual indicators for blocked users (strikethrough names and dimmed text)
+* Last seen time with tooltip showing exact timestamp
+
+### Admin Actions
+
+* Block users with a single click
+* Unblock previously blocked users
+* Permanently delete users (complete removal from Supabase auth.users table)
+* Bulk actions for multiple selected users
+
+### Security Features
+
+* Blocked users cannot access the system
+* Automatic redirection to login page for unauthorized access
+* Server-side validation for all actions
+* Unique email enforcement at database level
+
+### User Experience
+
+* Responsive design for desktop and mobile
+* Tooltips for action buttons
+* Success and error notifications
+* Clean, modern UI with TailwindCSS
+
+## Technology Stack
+
+### Frontend
+
+* Next.js 15.2.3
+* React 19
+* TailwindCSS 4
+* TanStack React Table for data display
+* React Hook Form for form handling
+* React Hot Toast for notifications
+
+### Backend
+
+* Next.js API Routes
+* Supabase for authentication
+* Prisma ORM for database access
+
+### Database
+
+* PostgreSQL with Supabase
+* Unique indices for email enforcement
+* Proper schema design with relationships
+
+## Local Setup
+
+### Prerequisites
+
+* Node.js (v18 or higher)
+* npm or yarn
+* PostgreSQL database (or Supabase account)
+
+### Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/user_management"
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation Steps
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Clone the repository**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   git clone https://github.com/yourusername/user-management.git
+   cd user-management
+   ```
 
-## Learn More
+1. **Install dependencies**
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Set up the database**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   npx prisma migrate dev --name init
+   ```
 
-## Deploy on Vercel
+1. **Run the development server**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Open the application**
+
+   Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Project Structure
+
+```text
+user-management/
+├── app/                    # Next.js App Router
+│   ├── api/                # API endpoints
+│   ├── dashboard/          # Dashboard page
+│   ├── login/              # Login page
+│   └── register/           # Registration page
+├── components/             # React components
+│   ├── auth/               # Authentication components
+│   ├── dashboard/          # Dashboard components
+│   └── ui/                 # UI components
+├── lib/                    # Utility functions
+│   └── utils/              # Helper utilities
+├── prisma/                 # Prisma schema and migrations
+│   └── schema.prisma       # Database schema
+└── public/                 # Static assets
+```
+
+## Database Schema
+
+The application uses a PostgreSQL database with the following main tables:
+
+* **User** - Stores user information with fields:
+  * id (UUID, primary key)
+  * email (String, unique)
+  * name (String)
+  * status (String: active/blocked)
+  * lastLogin (DateTime)
+  * createdAt (DateTime)
+  * updatedAt (DateTime)
+  * authId (UUID, foreign key to Supabase auth.users)
+
+The database includes a unique index on the email field to prevent duplicate emails at the database level.
+
+## API Endpoints
+
+* **/api/users**
+  * GET: Fetch all users
+  * DELETE: Delete selected users (completely removes users from Supabase auth.users)
+
+* **/api/users/register**
+  * POST: Register a new user
+
+* **/api/users/login**
+  * POST: Authenticate a user
+
+* **/api/users/status**
+  * PATCH: Update user status (block/unblock)
+
+## Error Handling
+
+The application implements robust error handling:
+
+* Database errors are properly caught and user-friendly messages are displayed
+* Type-safe error handling with TypeScript
+* Consistent error messages across the application
+
+## Responsive Design
+
+The application is fully responsive and works well on:
+
+* Desktop browsers
+* Tablets
+* Mobile devices
+
+## Deployment
+
+The application can be deployed to various platforms:
+
+1. **Vercel** (recommended for Next.js apps)
+   * Connect your GitHub repository
+   * Configure environment variables
+   * Deploy with a single click
+
+2. **Other Platforms**
+   * Netlify
+   * AWS
+   * Azure
+   * Any platform supporting Node.js applications
