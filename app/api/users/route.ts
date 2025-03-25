@@ -16,7 +16,7 @@ export async function GET() {
 
     if (!user || error) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { message: 'You are not authorized. log in first.' },
         { status: 401 }
       )
     }
@@ -33,12 +33,12 @@ export async function GET() {
 
     if (!currentUser) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { message: 'You are not authorized. log in first.' },
         { status: 401 }
       )
     }
 
-    // Get all users, sorted by lastLogin
+    // Get all users, sorted by email
     const users = await prisma.user.findMany({
       orderBy: {
         email: 'asc',
@@ -49,7 +49,7 @@ export async function GET() {
   } catch (error) {
     console.error('Error getting users:', error)
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { message: 'Internal Server Error' },
       { status: 500 }
     )
   }
@@ -65,7 +65,7 @@ export async function DELETE(request: Request) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { message: 'You are not authorized. log in first.' },
         { status: 401 }
       )
     }
@@ -90,29 +90,14 @@ export async function DELETE(request: Request) {
 
     if (!idsParam) {
       return NextResponse.json(
-        { error: 'No user IDs provided' },
+        { message: 'No user IDs provided' },
         { status: 400 }
       )
     }
-
     // Parse IDs from comma-separated string
     const ids = idsParam.split(',')
 
-    // Validate IDs
-    if (!ids.length) {
-      return NextResponse.json(
-        { error: 'No valid user IDs provided' },
-        { status: 400 }
-      )
-    }
-
-    // If current user is being deleted, sign them out
-    if (ids.includes(currentUser.id)) {
-      await supabase.auth.signOut()
-    }
     console.log('Deleting users, IDs:', ids)
-
-  
 
     try {
       // First, get the auth IDs for all users we want to delete
@@ -158,7 +143,7 @@ export async function DELETE(request: Request) {
       const errorMessage = handleDatabaseError(err)
       console.error('Error deleting users:', err)
       return NextResponse.json(
-        { error: errorMessage },
+        { message: errorMessage },
         { status: 500 }
       )
     }
@@ -167,7 +152,7 @@ export async function DELETE(request: Request) {
     const errorMessage = handleDatabaseError(error)
     
     return NextResponse.json(
-      { error: errorMessage },
+      { message: errorMessage },
       { status: 500 }
     )
   }

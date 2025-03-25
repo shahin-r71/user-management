@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { handleDatabaseError } from '@/lib/utils/errors'
 import { createClient } from '@/lib/utils/supabase/server'
+import { revalidatePath } from 'next/cache'
 
 
 export async function GET() {
@@ -34,7 +35,7 @@ export async function GET() {
         { status: 404 }
         )
     }
-
+    revalidatePath('/dashboard')   
     return NextResponse.json({
         id: user.id,
         status: CurrentUser.status,
@@ -101,6 +102,9 @@ export async function PATCH(request: Request) {
         },
     })
 
+    // Force revalidation to ensure fresh data
+    revalidatePath('/dashboard')
+    
     return NextResponse.json({
         success: true,
         count: updatedUsers.count,

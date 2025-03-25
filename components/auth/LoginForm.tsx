@@ -53,13 +53,9 @@ export function LoginForm() {
         } catch (error: unknown) {
             console.error("Login error:", error);
             if (error instanceof Error) {
-                if (error.message.includes("Invalid login credentials")) {
-                    toast.error("Invalid email or password");
-                } else if (error.message.includes("blocked")) {
-                    toast.error("Your account has been blocked");
-                } else {
-                    toast.error("Failed to sign in");
-                }
+                toast.error(error.message.includes("Invalid login credentials")?
+                "Invalid email or password":
+                "Failed to sign in");
             } else {
                 toast.error("Failed to sign in");
             }

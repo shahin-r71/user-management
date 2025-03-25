@@ -6,41 +6,46 @@ import { toast } from "react-hot-toast";
 import { UserTable } from "@/components/dashboard/UserTable";
 import { TableToolbar } from "@/components/dashboard/TableToolbar";
 import type { User } from "@/lib/utils/types";
+import { createClient } from "@/lib/utils/supabase/client";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
-
-  
+    // Get current user email for self-deletion check
+    const getCurrentUser = async () => {
+      const supabase = createClient();
+      const { data } = await supabase.auth.getUser();
+      if (data?.user) {
+        setCurrentUserEmail(data.user.email || null);
+      }
+    };
+    getCurrentUser();
+  }, []);  
 
   const fetchUsers = async () => {
     try {
       const response = await fetch("/api/users");
       if (!response.ok) {
-       const error = await response.json();
+        const error = await response.json();
         throw new Error(error.message || "Failed to fetch users");
-     }
+      }
       const data = await response.json();
       setUsers(data);
     } catch (error: unknown) {
       console.error("Error fetching users:", error);
       const errorMessage = error instanceof Error ? error.message : "Failed to fetch users";
       toast.error(errorMessage);
-      if (typeof errorMessage === "string" && errorMessage.includes("Unauthorized")) {
-        router.push("/login");
-      }
+      router.push("/login");
     } finally {
       setIsLoading(false);
     }
   };
-
 
   const handleBlock = async () => {
 
@@ -62,7 +67,8 @@ export default function DashboardPage() {
       }
 
       toast.success(`User${selectedUsers.length !== 1 ? 's' : ''} blocked successfully`);
-      fetchUsers();
+      router.refresh();
+      await fetchUsers();
       setSelectedUsers([]);
     } catch (error: unknown) {
       console.error("Error blocking users:", error);
@@ -92,7 +98,8 @@ export default function DashboardPage() {
       }
 
       toast.success(`User${selectedUsers.length !== 1 ? 's' : ''} unblocked successfully`);
-      fetchUsers();
+      router.refresh();
+      await fetchUsers(); 
       setSelectedUsers([]);
     } catch (error: unknown) {
       console.error("Error unblocking users:", error);
@@ -103,6 +110,10 @@ export default function DashboardPage() {
   };
 
   const handleDelete = async () => {
+    // Check if user is deleting themselves
+    const isDeletingSelf = currentUserEmail && users.some(user => 
+      selectedUsers.includes(user.id) && user.email === currentUserEmail
+    );
 
     try {
       const response = await fetch(
@@ -117,8 +128,24 @@ export default function DashboardPage() {
         throw new Error(error.message || "Failed to delete users");
       }
 
-      toast.success( `User${selectedUsers.length !== 1 ? 's' : ''} deleted successfully`);
-      fetchUsers();
+      toast.success(`User${selectedUsers.length !== 1 ? 's' : ''} deleted successfully`);
+      
+      if (isDeletingSelf) {
+        // If deleting self, clear local storage directly instead of using signOut API
+        // This prevents the 403 error when trying to sign out a deleted user
+        if (typeof window !== 'undefined') {
+          // Clear Supabase session data from local storage
+          localStorage.removeItem('supabase.auth.token');
+          localStorage.removeItem('supabase.auth.expires_at');
+          localStorage.removeItem('supabase.auth.refresh_token');
+        }
+        router.push("/login");
+        return; // Exit early to prevent further API calls
+      }
+      
+      // Only refresh and fetch users if not deleting self
+      router.refresh();
+      await fetchUsers();
       setSelectedUsers([]);
     } catch (error: unknown) {
       console.error("Error deleting users:", error);
@@ -131,7 +158,7 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600"></div>
       </div>
     );
   }

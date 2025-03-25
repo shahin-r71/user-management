@@ -134,10 +134,9 @@ export function UserTable({
         newSelection = updater(rowSelection);
       } else {
         newSelection = updater;
-      }
-      
+      }   
       setRowSelection(newSelection);
-      
+    
       // Convert to array of IDs
       const selectedIds = Object.entries(newSelection)
         .filter(([, isSelected]) => isSelected)
