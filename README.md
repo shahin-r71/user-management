@@ -79,7 +79,7 @@ Create a `.env` file in the root directory with the following variables:
 
 ```env
 # Database
-DATABASE_URL="postgresql://username:password@localhost:5432/user_management"
+DATABASE_URL=your_postgres_database_url
 
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -92,7 +92,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/user-management.git
+   git clone https://github.com/shahin-r71/user-management.git
    cd user-management
    ```
 2. **Install dependencies**
