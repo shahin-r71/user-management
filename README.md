@@ -1,7 +1,10 @@
 # User Management System
 
 A full-stack web application for user management with authentication, registration, and admin capabilities.
-### Live Demo: [https://user-management-taupe-six.vercel.app/](https://user-management-taupe-six.vercel.app/)
+
+## Live Site: *[https://user-management-taupe-six.vercel.app/]()*
+
+## Live Video Demo: *[https://youtu.be/BPAHDsEYTmY]()*
 
 ## Features
 
@@ -92,30 +95,26 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
    git clone https://github.com/yourusername/user-management.git
    cd user-management
    ```
-
-1. **Install dependencies**
+2. **Install dependencies**
 
    ```bash
    npm install
    # or
    yarn install
    ```
-
-1. **Set up the database**
+3. **Set up the database**
 
    ```bash
    npx prisma migrate dev --name init
    ```
-
-1. **Run the development server**
+4. **Run the development server**
 
    ```bash
    npm run dev
    # or
    yarn dev
    ```
-
-1. **Open the application**
+5. **Open the application**
 
    Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 
@@ -158,16 +157,17 @@ The database includes a unique index on the email field to prevent duplicate ema
 ## API Endpoints
 
 * **/api/users**
+
   * GET: Fetch all users
   * DELETE: Delete selected users (completely removes users from Supabase auth.users)
-
 * **/api/users/register**
+
   * POST: Register a new user
-
 * **/api/users/login**
-  * POST: Authenticate a user
 
+  * POST: Authenticate a user
 * **/api/users/status**
+
   * PATCH: Update user status (block/unblock)
 
 ## Error Handling
@@ -191,11 +191,12 @@ The application is fully responsive and works well on:
 The application can be deployed to various platforms:
 
 1. **Vercel** (recommended for Next.js apps)
+
    * Connect your GitHub repository
    * Configure environment variables
    * Deploy with a single click
-
 2. **Other Platforms**
+
    * Netlify
    * AWS
    * Azure
